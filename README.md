@@ -8,6 +8,7 @@ Tutorial sobre Django
 2. [Instalación](#seccion02)
 3. [Parte 1: Introducción](#seccion1)
 4. [Parte 2: Base de Datos y Administración](#seccion2)
+5. [Parte 3: Vistas](#seccion3)
 
 <div id='seccion01'/>
 ## Entorno
@@ -185,7 +186,7 @@ Question.objects.get(pub_date__year=timezone.now().year)
 Question.objects.get(pk=1) # pk = primary key
 q.choice_set.all() # Acceso a las respuestas de la pregunta
 q.choice_set.count()
-Choice.objects.filter(question__pub_date__year=timezone.now().year) # La API es capaz de seguir relaciones en el modelo
+Choice.objects.filter(question__pub_date__year=timezone.now().year) # La API es capaz de seguir relaciones
 
 # Crear 
 q = Question(question_text="¿Qué pasa?", pub_date=timezone.now())
@@ -204,3 +205,37 @@ q.save()
 # Borrado
 q.delete()
 ```
+
+### Administración
+
+Ejecutar:
+
+```bash
+python3 manage.py createsuperuser
+Username: admin
+Email address: admin@example.com
+Password: **********
+Password (again): *********
+```
+
+Lanzar el servidor y acceder a [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/) en el navegador. Abrir el fichero **polls/admin.py** y añadir:
+
+```python
+from django.contrib import admin
+
+from .models import Question
+
+admin.site.register(Question)
+```
+
+Ahora se pueden añadir preguntas desde el administrador.
+
+<div id='seccion3'/>
+## Parte 3: Vistas
+
+[Volver al índice](#index)
+
+### Subparte 1
+
+Hacer
+

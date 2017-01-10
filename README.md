@@ -9,6 +9,7 @@ Tutorial sobre Django
 3. [Parte 1: Introducción](#seccion1)
 4. [Parte 2: Base de Datos y Administración](#seccion2)
 5. [Parte 3: Vistas](#seccion3)
+5. [Parte 4: Formularios](#seccion4)
 
 <div id='seccion01'/>
 ## Entorno
@@ -235,7 +236,81 @@ Ahora se pueden añadir preguntas desde el administrador.
 
 [Volver al índice](#index)
 
-### Subparte 1
+Crear directorio **templates** dentro de **polls**. Crear dentro del nuevo directorio **templates** un direrctorio llamado **polls**. Crear el fichero **index.html** dentro y añadir:
 
-Hacer
+```HTML+Django
+{% if latest_question_list %}
+    <ul>
+    {% for question in latest_question_list %}
+        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay consultas.</p>
+{% endif %}
+```
 
+Crear el fichero **polls/templates/polls/detail.html** y añadir:
+
+```HTML+Django
+<h1>{{ question.question_text }}</h1>
+<ul>
+{% for choice in question.choice_set.all %}
+    <li>{{ choice.choice_text }}</li>
+{% endfor %}
+</ul>
+
+```
+
+Abrir fichero **polls/views.py** y añadir:
+
+```python
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
+
+from .models import Question
+
+def index(request):
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    context = {'latest_question_list': latest_question_list}
+    return render(request, 'polls/index.html', context)
+
+def detail(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/detail.html', {'question': question})
+
+def results(request, question_id):
+    response = "Resultados de la pregunta %s."
+    return HttpResponse(response % question_id)
+
+def vote(request, question_id):
+    return HttpResponse("Formulario para votar por la pregunta %s." % question_id)
+```
+
+Abrir fichero **polls/urls.py** y añadir:
+
+```python
+from django.conf.urls import url
+
+from . import views
+
+app_name = 'polls' # Namespace
+
+urlpatterns = [
+    # /polls/
+    url(r'^$', views.index, name='index'),
+    # /polls/5/
+    url(r'^(?P<question_id>[0-9]+)/$', views.detail, name='detail'),
+    # /polls/5/results/
+    url(r'^(?P<question_id>[0-9]+)/results/$', views.results, name='results'),
+    # /polls/5/vote/
+    url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
+]
+```
+
+<div id='seccion4'/>
+## Parte 4: Formularios
+
+[Volver al índice](#index)
+
+Por hacer
